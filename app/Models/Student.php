@@ -26,7 +26,7 @@ class Student extends Model
 
     protected $fillable = [
         "name",
-        "status_id",
+        "student_status_id",
         "contact_info",
         "default_rate",
         "default_rate_below_hour",
@@ -76,7 +76,7 @@ class Student extends Model
     ];
 
     public const CONNECTIONS = [
-        "status" => [
+        "student_status" => [
             "model" => StudentStatus::class,
             "mode" => "one",
             // "field_name" => "",
@@ -151,12 +151,12 @@ class Student extends Model
     #region relations
     public function status()
     {
-        return $this->belongsTo(StudentStatus::class);
+        return $this->belongsTo(StudentStatus::class, "student_status_id");
     }
 
     public function sessions()
     {
-        return $this->hasMany(Session::class);
+        return $this->hasMany(StudentSession::class);
     }
     #endregion
 

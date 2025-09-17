@@ -34,7 +34,7 @@ class StudentStatus extends Model
 
     public function __toString(): string
     {
-        return $this->name;
+        return view("components.statuses.icon-name", ["status" => $this])->render();
     }
 
     public function optionLabel(): Attribute
