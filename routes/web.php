@@ -13,7 +13,7 @@ Route::middleware("auth")->group(function () {
     Route::controller(CalendarController::class)->prefix("calendar")->group(function () {
         Route::get("today", "today")->name("calendar.today");
         Route::get("show", "show")->name("calendar.show");
-        
+
         Route::prefix("sessions")->group(function () {
             Route::get("", "sessions")->name("calendar.sessions");
         });
