@@ -26,8 +26,10 @@ class Student extends Model
 
     protected $fillable = [
         "name",
+        "nickname",
         "student_status_id",
         "contact_info",
+        "description",
         "default_rate",
         "default_rate_below_hour",
     ];
@@ -48,6 +50,12 @@ class Student extends Model
     use HasStandardFields;
 
     public const FIELDS = [
+        "nickname" => [
+            "type" => "text",
+            "label" => "Pseudonim",
+            "hint" => "Wykorzystywany w kalendarzu",
+            "icon" => "text-short",
+        ],
         "contact_info" => [
             "type" => "JSON",
             "column-types" => [ // for JSON
@@ -57,6 +65,11 @@ class Student extends Model
             "label" => "Dane kontaktowe",
             "hint" => "Numer telefonu, adres email, ...",
             "icon" => "phone",
+        ],
+        "description" => [
+            "type" => "TEXT",
+            "label" => "Opis",
+            "icon" => "text",
         ],
         "default_rate" => [
             "type" => "number",
