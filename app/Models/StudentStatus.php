@@ -15,18 +15,21 @@ class StudentStatus extends Model
     //
 
     public const META = [
-        "label" => "",
-        "icon" => "",
-        "description" => "",
-        "role" => "",
-        "ordering" => ,
+        "label" => "Statusy uczniów",
+        "icon" => "list-status",
+        "description" => "Oznaczenia pozwalające grupować uczniów na tych, którzy jeszcze korzystają z korepetycji i tych, którzy już nie.",
+        "role" => "teacher|technical",
+        "ordering" => 1,
     ];
 
     use SoftDeletes, Userstamps;
 
     protected $fillable = [
         "name",
-        "visible",
+        "description",
+        "color",
+        "icon",
+        "index",
     ];
 
     public function __toString(): string
@@ -45,20 +48,26 @@ class StudentStatus extends Model
     use HasStandardFields;
 
     public const FIELDS = [
-        // "<column_name>" => [
-        //     "type" => "<input_type>",
-        //     "column-types" => [ // for JSON
-        //         "<label>" => "<input_type>",
-        //     ],
-        //     "label" => "",
-        //     "hint" => "",
-        //     "icon" => "",
-        //     // "required" => true,
-        //     // "autofill-from" => ["<route>", "<model_name>"],
-        //     // "character-limit" => 999, // for text fields
-        //     // "hide-for-entmgr" => true,
-        //     // "role" => "",
-        // ],
+        "description" => [
+            "type" => "TEXT",
+            "label" => "Opis",
+            "icon" => "text",
+        ],
+        "color" => [
+            "type" => "color",
+            "label" => "Kolor",
+            "icon" => "palette",
+        ],
+        "icon" => [
+            "type" => "icon",
+            "label" => "Ikona",
+            "icon" => "emoticon-happy",
+        ],
+        "index" => [
+            "type" => "number",
+            "label" => "Kolejność",
+            "icon" => "priority-high",
+        ],
     ];
 
     public const CONNECTIONS = [
@@ -135,6 +144,10 @@ class StudentStatus extends Model
     #endregion
 
     #region relations
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
     #endregion
 
     #region helpers

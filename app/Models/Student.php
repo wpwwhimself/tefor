@@ -15,18 +15,21 @@ class Student extends Model
     //
 
     public const META = [
-        "label" => "",
-        "icon" => "",
-        "description" => "",
-        "role" => "",
-        "ordering" => ,
+        "label" => "Uczniowie",
+        "icon" => "account-school",
+        "description" => "Uczniowie zapisani na zajęcia.",
+        "role" => "teacher",
+        "ordering" => 11,
     ];
 
     use SoftDeletes, Userstamps;
 
     protected $fillable = [
         "name",
-        "visible",
+        "status_id",
+        "contact_info",
+        "default_rate",
+        "default_rate_below_hour",
     ];
 
     public function __toString(): string
@@ -45,29 +48,40 @@ class Student extends Model
     use HasStandardFields;
 
     public const FIELDS = [
-        // "<column_name>" => [
-        //     "type" => "<input_type>",
-        //     "column-types" => [ // for JSON
-        //         "<label>" => "<input_type>",
-        //     ],
-        //     "label" => "",
-        //     "hint" => "",
-        //     "icon" => "",
-        //     // "required" => true,
-        //     // "autofill-from" => ["<route>", "<model_name>"],
-        //     // "character-limit" => 999, // for text fields
-        //     // "hide-for-entmgr" => true,
-        //     // "role" => "",
-        // ],
+        "contact_info" => [
+            "type" => "JSON",
+            "column-types" => [ // for JSON
+                "Pole" => "text",
+                "Wartość" => "text",
+            ],
+            "label" => "Dane kontaktowe",
+            "hint" => "Numer telefonu, adres email, ...",
+            "icon" => "phone",
+        ],
+        "default_rate" => [
+            "type" => "number",
+            "label" => "Domyślna stawka",
+            "icon" => "cash",
+            "min" => 0,
+            "step" => 0.01,
+        ],
+        "default_rate_below_hour" => [
+            "type" => "number",
+            "label" => "Domyślna stawka (poniżej godziny)",
+            "icon" => "cash",
+            "hint" => "Używana, gdy sesja trwa mniej niż godzinę",
+            "min" => 0,
+            "step" => 0.01,
+        ],
     ];
 
     public const CONNECTIONS = [
-        // "<name>" => [
-        //     "model" => ,
-        //     "mode" => "<one|many>",
-        //     // "field_name" => "",
-        //     // "field_label" => "",
-        // ],
+        "status" => [
+            "model" => StudentStatus::class,
+            "mode" => "one",
+            // "field_name" => "",
+            // "field_label" => "",
+        ],
     ];
 
     public const ACTIONS = [
@@ -113,7 +127,7 @@ class Student extends Model
     protected function casts(): array
     {
         return [
-            //
+            "contact_info" => "collection",
         ];
     }
 
@@ -135,6 +149,15 @@ class Student extends Model
     #endregion
 
     #region relations
+    public function status()
+    {
+        return $this->belongsTo(StudentStatus::class);
+    }
+
+    public function sessions()
+    {
+        return $this->hasMany(Session::class);
+    }
     #endregion
 
     #region helpers

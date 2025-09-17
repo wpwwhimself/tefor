@@ -12,32 +12,33 @@ use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Session extends Model
 {
-    //
+    protected $table = "student_sessions";
 
     public const META = [
-        "label" => "",
-        "icon" => "",
-        "description" => "",
-        "role" => "",
-        "ordering" => ,
+        "label" => "Sesje",
+        "icon" => "timer-sand",
+        "description" => "Sesje korepetycji. Jedna sesja odzwierciedla jedno spotkanie z uczniem.",
+        "role" => "teacher|technical",
+        "ordering" => 12,
     ];
 
     use SoftDeletes, Userstamps;
 
     protected $fillable = [
-        "name",
-        "visible",
+        "started_at",
+        "duration_h",
+        "cost",
     ];
 
     public function __toString(): string
     {
-        return $this->name;
+        return $this->started_at->diffForHumans();
     }
 
     public function optionLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->name,
+            get: fn () => $this->started_at->format("d.m.Y, H:i"),
         );
     }
 
@@ -45,29 +46,35 @@ class Session extends Model
     use HasStandardFields;
 
     public const FIELDS = [
-        // "<column_name>" => [
-        //     "type" => "<input_type>",
-        //     "column-types" => [ // for JSON
-        //         "<label>" => "<input_type>",
-        //     ],
-        //     "label" => "",
-        //     "hint" => "",
-        //     "icon" => "",
-        //     // "required" => true,
-        //     // "autofill-from" => ["<route>", "<model_name>"],
-        //     // "character-limit" => 999, // for text fields
-        //     // "hide-for-entmgr" => true,
-        //     // "role" => "",
-        // ],
+        "started_at" => [
+            "type" => "datetime-local",
+            "label" => "Data sesji",
+            "icon" => "calendar",
+            "required" => true,
+        ],
+        "duration_h" => [
+            "type" => "number",
+            "label" => "Czas trwania [h]",
+            "icon" => "timer",
+            "required" => true,
+            "min" => 0,
+            "step" => 0.25,
+        ],
+        "cost" => [
+            "type" => "number",
+            "label" => "Koszt [zł]",
+            "icon" => "cash",
+            "required" => true,
+        ],
     ];
 
     public const CONNECTIONS = [
-        // "<name>" => [
-        //     "model" => ,
-        //     "mode" => "<one|many>",
-        //     // "field_name" => "",
-        //     // "field_label" => "",
-        // ],
+        "student" => [
+            "model" => Student::class,
+            "mode" => "one",
+            // "field_name" => "",
+            // "field_label" => "",
+        ],
     ];
 
     public const ACTIONS = [
@@ -113,7 +120,7 @@ class Session extends Model
     protected function casts(): array
     {
         return [
-            //
+            "started_at" => "datetime",
         ];
     }
 
@@ -135,6 +142,10 @@ class Session extends Model
     #endregion
 
     #region relations
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
     #endregion
 
     #region helpers
