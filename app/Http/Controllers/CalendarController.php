@@ -30,7 +30,7 @@ class CalendarController extends Controller
                 "started_at" => Carbon::parse($ev["start"]["dateTime"]),
                 "duration_h" => Carbon::parse($ev["start"]["dateTime"])->diffInHours(Carbon::parse($ev["end"]["dateTime"])),
             ])
-            ->filter(fn ($ev) => StudentSession::where("started_at", $ev["started_at"])
+            ->filter(fn ($ev) => StudentSession::whereRaw("substr(started_at, 1, 10) = ?", $ev["started_at"]->format("Y-m-d"))
                 ->where("duration_h", $ev["duration_h"])
                 ->where("student_id", gettype($ev["student"]) === "object" ? $ev["student"]->id : null)
                 ->exists() === false
