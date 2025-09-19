@@ -23,6 +23,10 @@ Route::middleware("auth")->group(function () {
     Route::controller(StudentController::class)->prefix("students")->group(function () {
         Route::get("", "list")->name("students.list");
         Route::post("create", "create")->name("students.create");
+
+        Route::prefix("rates")->group(function () {
+            Route::post("update", "ratesUpdate")->name("students.rates.update");
+        });
     });
 
     Route::controller(StatsController::class)->prefix("stats")->group(function () {

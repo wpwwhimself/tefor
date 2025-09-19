@@ -25,4 +25,10 @@ class StudentController extends Controller
         Student::create($rq->all());
         return back()->with("toast", ["success", "Utworzono ucznia"]);
     }
+
+    public function ratesUpdate(Request $rq)
+    {
+        Student::whereRaw(true)->update($rq->except("_token"));
+        return back()->with("toast", ["success", "Stawki zaktualizowane"]);
+    }
 }

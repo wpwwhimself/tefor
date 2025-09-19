@@ -9,6 +9,13 @@
 
     <div role="middle-part">
         {!! $student->status !!}
+
+        <x-shipyard.app.icon-label-value
+            icon="cash"
+            label="Stawka za godzinę/mniej niż godzinę"
+        >
+            {{ $student->default_rate }} / {{ $student->default_rate_below_hour }} zł
+        </x-shipyard.app.icon-label-value>
     </div>
 
     <div role="bottom-part">

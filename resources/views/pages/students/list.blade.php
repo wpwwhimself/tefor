@@ -20,6 +20,12 @@
             icon="plus"
             label="Dodaj"
         />
+        <x-shipyard.ui.button
+            icon="cash-edit"
+            pop="Masowa zmiana stawek"
+            action="none"
+            onclick="openModal('update-default-rates')"
+        />
     </x-slot:actions>
 
     @foreach ($data as $student)
