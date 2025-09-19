@@ -16,11 +16,13 @@ Route::middleware("auth")->group(function () {
 
         Route::prefix("sessions")->group(function () {
             Route::get("", "sessions")->name("calendar.sessions");
+            Route::get("create", "sessionsCreate")->name("calendar.sessions.create");
         });
     });
 
     Route::controller(StudentController::class)->prefix("students")->group(function () {
         Route::get("", "list")->name("students.list");
+        Route::post("create", "create")->name("students.create");
     });
 
     Route::controller(StatsController::class)->prefix("stats")->group(function () {

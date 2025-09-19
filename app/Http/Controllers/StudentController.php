@@ -19,4 +19,10 @@ class StudentController extends Controller
             "data",
         ));
     }
+
+    public function create(Request $rq)
+    {
+        Student::create($rq->all());
+        return back()->with("toast", ["success", "Utworzono ucznia"]);
+    }
 }

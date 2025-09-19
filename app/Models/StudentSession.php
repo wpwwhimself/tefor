@@ -25,6 +25,7 @@ class StudentSession extends Model
     use SoftDeletes, Userstamps;
 
     protected $fillable = [
+        "student_id",
         "started_at",
         "duration_h",
         "cost",

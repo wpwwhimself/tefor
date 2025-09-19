@@ -174,5 +174,12 @@ class Student extends Model
     #endregion
 
     #region helpers
+    public function calculateCost(float $duration_h): float
+    {
+        return round($duration_h * ($duration_h < 1
+            ? $this->default_rate_below_hour
+            : $this->default_rate
+        ), 2);
+    }
     #endregion
 }
