@@ -13,7 +13,7 @@
     <div class="ghost">Brak zapisanych sesji.</div>
     @endforelse
 
-    {{ $data->links() }}
+    {{ $data->links("components.shipyard.pagination.default") }}
 </x-shipyard.app.card>
 
 @endsection
