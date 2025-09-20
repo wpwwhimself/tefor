@@ -57,7 +57,12 @@ class CalendarController extends Controller
     #region sessions
     public function sessions()
     {
-        abort(501);
+        $data = StudentSession::orderByDesc("started_at")
+            ->paginate(25);
+
+        return view("pages.calendar.sessions", compact(
+            "data",
+        ));
     }
 
     public function sessionsCreate(Request $rq)
