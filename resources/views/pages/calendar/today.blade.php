@@ -19,6 +19,9 @@
         Poniższa lista wyświetla wydarzenia z kalendarza z ostatniego miesiąca,
         które nie mają swojego pokrycia z zapisanymi sesjami.
     </p>
+    <p>
+        Jeśli coś się zmieniło w tej liście, <span class="accent primary">popraw wydarzenia w kalendarzu i odśwież tę stronę</span>.
+    </p>
 
     @forelse ($calendarEvents as $event)
     <x-calendar.potential-session
