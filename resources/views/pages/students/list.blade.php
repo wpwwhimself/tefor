@@ -29,7 +29,15 @@
     </x-slot:actions>
 
     @foreach ($data as $student)
-    <x-students.tile :student="$student" />
+    <x-shipyard.app.model.tile :model="$student">
+        <x-slot:actions>
+            <x-shipyard.ui.button
+                :action="route('admin.model.edit', ['model' => 'students', 'id' => $student->id])"
+                icon="pencil"
+                pop="Edytuj"
+            />
+        </x-slot:actions>
+    </x-shipyard.app.model.tile>
     @endforeach
 </x-shipyard.app.card>
 

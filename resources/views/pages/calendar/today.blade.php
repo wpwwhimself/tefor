@@ -55,7 +55,13 @@
     </x-slot:actions>
 
     @forelse ($sessionsToday as $session)
-    <x-sessions.tile :session="$session" />
+    <x-shipyard.app.model.tile :model="$session">
+        <x-shipyard.ui.button
+            :action="route('admin.model.edit', ['model' => 'student-sessions', 'id' => $session->id])"
+            icon="pencil"
+            pop="Edytuj"
+        />
+    </x-shipyard.app.model.tile>
     @empty
     <p class="ghost">Brak zapisanych sesji na dzisiaj.</p>
     @endforelse

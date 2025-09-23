@@ -72,7 +72,11 @@ class Student extends Model
     public function displayMiddlePart(): Attribute
     {
         return Attribute::make(
-            get: fn () => null,
+            get: fn () => view("components.shipyard.app.icon-label-value", [
+                "icon" => "cash",
+                "label" => "Stawka (za godzinę/za mniej niż godzinę)",
+                "slot" => "$this->default_rate / $this->default_rate_below_hour zł",
+            ])->render(),
         );
     }
     #endregion
