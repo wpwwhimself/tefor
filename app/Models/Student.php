@@ -8,6 +8,7 @@ use App\Traits\Shipyard\HasStandardScopes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\View\ComponentAttributeBag;
 use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Student extends Model
@@ -34,6 +35,7 @@ class Student extends Model
         "default_rate_below_hour",
     ];
 
+    #region presentation
     public function __toString(): string
     {
         return $this->name;
@@ -45,6 +47,35 @@ class Student extends Model
             get: fn () => $this->name,
         );
     }
+
+    public function displayTitle(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => view("components.shipyard.app.h", [
+                "lvl" => 3,
+                "icon" => $this->icon ?? self::META["icon"],
+                "attributes" => new ComponentAttributeBag([
+                    "role" => "card-title",
+                ]),
+                "slot" => $this->name,
+            ])->render(),
+        );
+    }
+
+    public function displaySubtitle(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->status,
+        );
+    }
+
+    public function displayMiddlePart(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => null,
+        );
+    }
+    #endregion
 
     #region fields
     use HasStandardFields;
