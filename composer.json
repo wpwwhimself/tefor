@@ -9,7 +9,7 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "wpwwhimself/shipyard": "^2.1"
+        "wpwwhimself/shipyard": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -21,6 +21,13 @@
         "phpunit/phpunit": "^11.5.3"
     },
     "repositories": {
+        "shipyard-local": {
+            "type": "path",
+            "url": "../shipyard",
+            "options": {
+                "symlink": true
+            }
+        },
         "shipyard": {
             "type": "vcs",
             "url": "https://github.com/wpwwhimself/shipyard.git"
