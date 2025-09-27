@@ -16,7 +16,23 @@ class Setting extends ShipyardSetting
          * each section contains fields (name, label, hint, icon)
          */
         return [
-
+            [
+                "title" => "Podliczenia",
+                "icon" => "chart-bar",
+                "id" => "stats",
+                "fields" => [
+                    [
+                        "name" => "stats_range_from",
+                        "label" => "Podliczaj od",
+                        "icon" => "calendar",
+                    ],
+                    [
+                        "name" => "stats_range_to",
+                        "label" => "Podliczaj do",
+                        "icon" => "calendar",
+                    ],
+                ],
+            ],
         ];
     }
 }
