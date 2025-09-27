@@ -1,5 +1,5 @@
 @extends("layouts.shipyard.admin")
-@section("title", "Statystyki")
+@section("title", ($student) ? "Statystyki ucznia: $student" : "Statystyki")
 
 @section("sidebar")
 
@@ -13,31 +13,26 @@
         class="tertiary"
     />
     @endforeach
+
+    <x-shipyard.app.sidebar-separator />
+
+    <x-shipyard.ui.button
+        :icon="model_icon('students')"
+        pop="Wybierz ucznia"
+        pop-direction="right"
+        action="none"
+        onclick="openModal('stats-for-student', {
+            student_id: '{{ request('student') }}',
+        })"
+        class="primary"
+    />
 </div>
 
 @endsection
 
 @section("content")
 
-<x-shipyard.app.card>
-    <div class="flex right center middle">
-        Wyświetlam statystyki z zakresu od
-        <strong class="accent primary">{{ setting("stats_range_from") }}</strong>
-        do
-        <strong class="accent primary">{{ setting("stats_range_to") }}</strong>
-
-        <x-shipyard.ui.button
-            icon="calendar-edit"
-            label="Zmień zakres"
-            action="none"
-            onclick="openModal('update-stats-range', {
-                stats_range_from: '{{ setting('stats_range_from') }}',
-                stats_range_to: '{{ setting('stats_range_to') }}',
-            })"
-            class="primary"
-        />
-    </div>
-</x-shipyard.app.card>
+<x-stats.range />
 
 <x-shipyard.app.card
     :title="$sections[0]['title']"

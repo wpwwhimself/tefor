@@ -169,6 +169,17 @@ class Student extends Model
 
     #region scopes
     use HasStandardScopes;
+
+    public function scopeForPicking($query)
+    {
+        $query->visible()
+            ->get()
+            ->map(fn ($s) => [
+                "label" => $s,
+                "value" => $s->id,
+            ])
+            ->toArray();
+    }
     #endregion
 
     #region attributes

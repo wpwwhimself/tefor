@@ -32,6 +32,11 @@
     <x-shipyard.app.model.tile :model="$student">
         <x-slot:actions>
             <x-shipyard.ui.button
+                :action="route('stats.index', ['student' => $student])"
+                icon="chart-bar"
+                label="Statystyki"
+            />
+            <x-shipyard.ui.button
                 :action="route('admin.model.edit', ['model' => 'students', 'id' => $student->id])"
                 icon="pencil"
                 pop="Edytuj"

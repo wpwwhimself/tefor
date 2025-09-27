@@ -32,6 +32,7 @@ Route::middleware("auth")->group(function () {
     Route::controller(StatsController::class)->prefix("stats")->group(function () {
         Route::get("", "index")->name("stats.index");
 
+        Route::post("/pick-student", "pickStudent")->name("stats.pick-student");
         Route::post("/range/update", "updateRange")->name("stats.range.update");
     });
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shipyard\Setting;
+use App\Models\Student;
 use App\Models\StudentSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -11,10 +12,16 @@ class StatsController extends Controller
 {
     public function index()
     {
+        $student = Student::find(request("student"));
+
         $data = StudentSession::orderBy("started_at")
             ->where("started_at", ">=", setting("stats_range_from"))
-            ->where("started_at", "<=", setting("stats_range_to"))
-            ->get();
+            ->where("started_at", "<=", setting("stats_range_to"));
+        if ($student) {
+            $data = $data->where("student_id", $student->id);
+        }
+
+        $data = $data->get();
 
         $incomeByMonth = $data->groupBy(fn ($ss) => $ss->started_at->format("Y-m"))
             ->map(fn ($sss, $month) => [
@@ -83,10 +90,11 @@ class StatsController extends Controller
             "incomeByMonth",
             "summary",
             "sections",
+            "student",
         ));
     }
 
-    #region range
+    #region filters
     public function updateRange(Request $rq)
     {
         $fields = $rq->except("_token");
@@ -94,6 +102,11 @@ class StatsController extends Controller
             Setting::find($name)->update(["value" => $value]);
         }
         return back()->with("toast", ["success", "Zaktualizowano zakres"]);
+    }
+
+    public function pickStudent(Request $rq)
+    {
+        return redirect()->route("stats.index", ["student" => $rq->student_id])->with("toast", ["success", "Filtry zmienione"]);
     }
     #endregion
 
