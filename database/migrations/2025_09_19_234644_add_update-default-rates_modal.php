@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $fields = Student::fields();
+        $fields = Student::getFields();
 
         Modal::create([
             "name" => "update-default-rates",

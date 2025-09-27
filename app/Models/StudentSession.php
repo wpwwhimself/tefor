@@ -72,7 +72,7 @@ class StudentSession extends Model
     {
         return Attribute::make(
             get: fn () => view("components.shipyard.app.model.connections-preview", [
-                "connections" => self::connections(),
+                "connections" => self::getConnections(),
                 "model" => $this,
             ])->render()
             . view("components.shipyard.app.icon-label-value", [
