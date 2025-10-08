@@ -8,7 +8,6 @@
     <x-shipyard.ui.button
         :icon="$section['icon']"
         :pop="$section['title']"
-        pop-direction="right"
         action="#{{ $section['id'] }}"
         class="tertiary"
     />
@@ -19,7 +18,6 @@
     <x-shipyard.ui.button
         :icon="model_icon('students')"
         pop="Wybierz ucznia"
-        pop-direction="right"
         action="none"
         onclick="openModal('stats-for-student', {
             student_id: '{{ request('student') }}',
