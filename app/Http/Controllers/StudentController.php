@@ -22,13 +22,21 @@ class StudentController extends Controller
 
     public function create(Request $rq)
     {
-        Student::create($rq->all());
+        $data = $rq->except("_token");
+        $data["default_rate"] = $data["cash_for_60_min"];
+        $data["default_rate_below_hour"] = round($data["cash_for_45_min"] * 60 / 45, 2);
+
+        Student::create($data);
         return back()->with("toast", ["success", "Utworzono ucznia"]);
     }
 
     public function ratesUpdate(Request $rq)
     {
-        Student::whereRaw(true)->update($rq->except("_token"));
+        $data = $rq->except("_token");
+        $data["default_rate"] = $data["cash_for_60_min"];
+        $data["default_rate_below_hour"] = round($data["cash_for_45_min"] * 60 / 45, 2);
+
+        Student::whereRaw(true)->update($data);
         return back()->with("toast", ["success", "Stawki zaktualizowane"]);
     }
 }
