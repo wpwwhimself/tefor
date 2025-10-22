@@ -93,7 +93,7 @@ class Student extends Model
         ],
         "contact_info" => [
             "type" => "JSON",
-            "column-types" => [ // for JSON
+            "columnTypes" => [ // for JSON
                 "Pole" => "text",
                 "Wartość" => "text",
             ],
