@@ -13,7 +13,7 @@ class CalendarController extends Controller
     #region calendar
     public function today()
     {
-        $eventLower = Carbon::today()->subMonth();
+        $eventLower = Carbon::today()->subMonths(3);
         $eventUpper = Carbon::today()->endOfDay();
 
         $calendarEvents = Http::withQueryParameters([
