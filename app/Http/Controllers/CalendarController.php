@@ -16,25 +16,29 @@ class CalendarController extends Controller
         $eventLower = Carbon::today()->subMonths(3);
         $eventUpper = Carbon::today()->endOfDay();
 
-        $calendarEvents = Http::withQueryParameters([
-            "key" => env("GOOGLE_API_KEY"),
-            "timeMin" => $eventLower->toRfc3339String(),
-            "timeMax" => $eventUpper->toRfc3339String(),
-            "singleEvents" => "true",
-            "orderBy" => "startTime",
-        ])
-            ->get("https://www.googleapis.com/calendar/v3/calendars/".env("GOOGLE_CALENDAR_ID")."/events")
-            ->collect("items")
-            ->map(fn ($ev) => [
-                "student" => Student::where("nickname", $ev["summary"])->first() ?? $ev["summary"],
-                "started_at" => Carbon::parse($ev["start"]["dateTime"]),
-                "duration_h" => Carbon::parse($ev["start"]["dateTime"])->diffInHours(Carbon::parse($ev["end"]["dateTime"])),
+        try {
+            $calendarEvents = Http::withQueryParameters([
+                "key" => env("GOOGLE_API_KEY"),
+                "timeMin" => $eventLower->toRfc3339String(),
+                "timeMax" => $eventUpper->toRfc3339String(),
+                "singleEvents" => "true",
+                "orderBy" => "startTime",
             ])
-            ->filter(fn ($ev) => StudentSession::whereRaw("substr(started_at, 1, 10) = ?", $ev["started_at"]->format("Y-m-d"))
-                ->where("duration_h", $ev["duration_h"])
-                ->where("student_id", gettype($ev["student"]) === "object" ? $ev["student"]->id : null)
-                ->exists() === false
-            );
+                ->get("https://www.googleapis.com/calendar/v3/calendars/".env("GOOGLE_CALENDAR_ID")."/events")
+                ->collect("items")
+                ->map(fn ($ev) => [
+                    "student" => Student::where("nickname", $ev["summary"])->first() ?? $ev["summary"],
+                    "started_at" => Carbon::parse($ev["start"]["dateTime"]),
+                    "duration_h" => Carbon::parse($ev["start"]["dateTime"])->diffInHours(Carbon::parse($ev["end"]["dateTime"])),
+                ])
+                ->filter(fn ($ev) => StudentSession::whereRaw("substr(started_at, 1, 10) = ?", $ev["started_at"]->format("Y-m-d"))
+                    ->where("duration_h", $ev["duration_h"])
+                    ->where("student_id", gettype($ev["student"]) === "object" ? $ev["student"]->id : null)
+                    ->exists() === false
+                );
+        } catch (\Throwable $th) {
+            $calendarEvents = null;
+        }
 
         $sessionsToday = StudentSession::whereBetween("started_at", [
             Carbon::today()->startOfDay(),

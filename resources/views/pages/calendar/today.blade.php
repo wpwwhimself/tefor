@@ -23,6 +23,9 @@
         Jeśli coś się zmieniło w tej liście, <span class="accent primary">popraw wydarzenia w kalendarzu i odśwież tę stronę</span>.
     </p>
 
+    @if ($calendarEvents === null)
+    <p class="accent danger">Nie udało się połączyć z kalendarzem, a przez to ustalić, jakie są zaplanowane sesje. Daj mi znać, że coś jest nie tak.</p>
+    @else
     @forelse ($calendarEvents as $event)
     <x-calendar.potential-session
         :student="$event['student']"
@@ -32,6 +35,7 @@
     @empty
     <p class="ghost">Wolne na dzisiaj!</p>
     @endforelse
+    @endif
 </x-shipyard.app.card>
 
 <x-shipyard.app.card
