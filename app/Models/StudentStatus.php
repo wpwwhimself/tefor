@@ -36,7 +36,7 @@ class StudentStatus extends Model
     #region presentation
     public function __toString(): string
     {
-        return view("components.statuses.icon-name", ["status" => $this])->render();
+        return $this->name;
     }
 
     public function optionLabel(): Attribute
@@ -49,15 +49,7 @@ class StudentStatus extends Model
     public function displayTitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => view("components.shipyard.app.h", [
-                "lvl" => 3,
-                "icon" => $this->icon ?? self::META["icon"],
-                "attributes" => new ComponentAttributeBag([
-                    "role" => "card-title",
-                    "style" => "color: {$this->color};",
-                ]),
-                "slot" => $this->name,
-            ])->render(),
+            get: fn () => view("components.statuses.icon-name", ["status" => $this])->render(),
         );
     }
 
@@ -153,6 +145,11 @@ class StudentStatus extends Model
 
     #region scopes
     use HasStandardScopes;
+
+    public function scopeForConnection($query)
+    {
+        return $query->orderBy("index");
+    }
     #endregion
 
     #region attributes

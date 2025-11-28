@@ -170,6 +170,11 @@ class Student extends Model
     #region scopes
     use HasStandardScopes;
 
+    public function scopeForConnection($query)
+    {
+        return $query->orderBy("name");
+    }
+
     public function scopeForPicking($query)
     {
         $query->visible()
