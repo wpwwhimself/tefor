@@ -3,7 +3,7 @@
 
 @section("content")
 
-<x-shipyard.app.card
+<x-shipyard.app.section
     title="Sesje zaplanowane na dzisiaj"
     icon="calendar"
 >
@@ -25,6 +25,7 @@
 
     @if ($calendarEvents === null)
     <p class="accent danger">Nie udało się połączyć z kalendarzem, a przez to ustalić, jakie są zaplanowane sesje. Daj mi znać, że coś jest nie tak.</p>
+    <script>console.error(`{{ $calendarError }}`)</script>
     @else
     @forelse ($calendarEvents as $event)
     <x-calendar.potential-session
@@ -36,9 +37,9 @@
     <p class="ghost">Wolne na dzisiaj!</p>
     @endforelse
     @endif
-</x-shipyard.app.card>
+</x-shipyard.app.section>
 
-<x-shipyard.app.card
+<x-shipyard.app.section
     title="Dzisiejsze sesje"
     :icon="model_icon('student-sessions')"
 >
@@ -69,6 +70,6 @@
     @empty
     <p class="ghost">Brak zapisanych sesji na dzisiaj.</p>
     @endforelse
-</x-shipyard.app.card>
+</x-shipyard.app.section>
 
 @endsection

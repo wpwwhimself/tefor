@@ -16,6 +16,9 @@ class CalendarController extends Controller
         $eventLower = Carbon::today()->subMonths(3);
         $eventUpper = Carbon::today()->endOfDay();
 
+        $calendarEvents = collect();
+        $calendarError = null;
+
         try {
             $calendarEvents = Http::withQueryParameters([
                 "key" => env("GOOGLE_API_KEY"),
@@ -25,7 +28,16 @@ class CalendarController extends Controller
                 "orderBy" => "startTime",
             ])
                 ->get("https://www.googleapis.com/calendar/v3/calendars/".env("GOOGLE_CALENDAR_ID")."/events")
-                ->collect("items")
+                ->collect();
+
+            if ($calendarEvents->has("error")) {
+                throw new \Exception(implode(" ", [
+                    $calendarEvents["error"]["code"],
+                    $calendarEvents["error"]["message"],
+                ]));
+            }
+
+            $calendarEvents = collect($calendarEvents["items"])
                 ->map(fn ($ev) => [
                     "student" => Student::where("nickname", $ev["summary"])->first() ?? $ev["summary"],
                     "started_at" => Carbon::parse($ev["start"]["dateTime"]),
@@ -38,6 +50,7 @@ class CalendarController extends Controller
                 );
         } catch (\Throwable $th) {
             $calendarEvents = null;
+            $calendarError = $th->getMessage();
         }
 
         $sessionsToday = StudentSession::whereBetween("started_at", [
@@ -48,6 +61,7 @@ class CalendarController extends Controller
 
         return view("pages.calendar.today", compact(
             "calendarEvents",
+            "calendarError",
             "sessionsToday",
         ));
     }
