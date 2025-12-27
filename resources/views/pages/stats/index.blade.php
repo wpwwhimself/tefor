@@ -39,6 +39,7 @@
 >
     <x-shipyard.stats.chart.column
         :data="$incomeByMonth"
+        title="Wybrany rok"
     />
     <x-shipyard.stats.chart.column
         :data="$incomeByMonthYearBack"
