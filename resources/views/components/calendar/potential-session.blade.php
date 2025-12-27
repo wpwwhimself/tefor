@@ -10,12 +10,16 @@ $student_exists = gettype($student) === "object";
 
 <div role="model-card">
     <div role="top-part">
-        <h3 role="card-title">
-            {{ $student }}
-            @if (!$student_exists)
-            <span class="ghost">(uczeń niezapisany)</span>
-            @endif
-        </h3>
+        @if ($student instanceof \App\Models\Student)
+            {!! $student->display_title !!}
+        @else
+            <x-shipyard.app.h lvl="3" :icon="model_icon('students')" role="card-title">
+                {{ $student }}
+                @if (!$student_exists)
+                <span class="ghost">(uczeń niezapisany)</span>
+                @endif
+            </x-shipyard.app.h>
+        @endif
     </div>
 
     <div role="middle-part">
@@ -32,6 +36,17 @@ $student_exists = gettype($student) === "object";
         >
             {{ $durationH }} h
         </x-shipyard.app.icon-label-value>
+
+        <x-shipyard.app.icon-label-value
+            icon="cash"
+            label="Koszt"
+        >
+            @if ($student instanceof \App\Models\Student)
+            {{ $student->calculateCost($durationH) }} zł
+            @else
+            ?
+            @endif
+        </x-shipyard.app.icon-label-value>
     </div>
 
     <div role="bottom-part">
@@ -45,6 +60,11 @@ $student_exists = gettype($student) === "object";
                 'duration_h' => $durationH,
             ])"
             class="primary"
+        />
+        <x-shipyard.ui.button
+            :icon="model_icon('students')"
+            pop="Edytuj ucznia"
+            :action="route('admin.model.edit', ['model' => 'students', 'id' => $student->id])"
         />
         @else
         <x-shipyard.ui.button

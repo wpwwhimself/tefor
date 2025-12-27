@@ -53,9 +53,10 @@ class Student extends Model
         return Attribute::make(
             get: fn () => view("components.shipyard.app.h", [
                 "lvl" => 3,
-                "icon" => $this->icon ?? self::META["icon"],
+                "icon" => $this->status->icon ?? self::META["icon"],
                 "attributes" => new ComponentAttributeBag([
                     "role" => "card-title",
+                    "style" => "color: " . $this->status->color,
                 ]),
                 "slot" => $this->name,
             ])->render(),
@@ -65,7 +66,7 @@ class Student extends Model
     public function displaySubtitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->status,
+            get: fn () => null,
         );
     }
 
