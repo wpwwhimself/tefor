@@ -34,5 +34,6 @@ Route::middleware("auth")->group(function () {
 
         Route::post("/pick-student", "pickStudent")->name("stats.pick-student");
         Route::post("/range/update", "updateRange")->name("stats.range.update");
+        Route::get("/range/update-quick", "updateRangeQuick")->name("stats.range.update-quick");
     });
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Shipyard\Setting;
 use App\Models\Student;
 use App\Models\StudentSession;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -14,25 +15,30 @@ class StatsController extends Controller
     {
         $student = Student::find(request("student"));
 
-        $data = StudentSession::orderBy("started_at")
-            ->where("started_at", ">=", setting("stats_range_from"))
-            ->where("started_at", "<=", setting("stats_range_to"));
-        if ($student) {
-            $data = $data->where("student_id", $student->id);
-        }
+        foreach ([
+            ["incomeByMonth", "ibmData", 0],
+            ["incomeByMonthYearBack", "ibmybData", 1],
+        ] as [$var, $datavar, $offset]) {
+            $$datavar = StudentSession::orderBy("started_at")
+                ->where("started_at", ">=", Carbon::parse(setting("stats_range_from"))->subYears($offset))
+                ->where("started_at", "<=", Carbon::parse(setting("stats_range_to"))->subYears($offset));
+            if ($student) {
+                $$datavar = $$datavar->where("student_id", $student->id);
+            }
 
-        $data = $data->get();
+            $$datavar = $$datavar->get();
 
-        $incomeByMonth = $data->groupBy(fn ($ss) => $ss->started_at->format("Y-m"))
-            ->map(fn ($sss, $month) => [
-                "label" => $month,
-                "value" => $sss->sum("cost"),
-                "value_label" => $sss->sum("cost")." zł, ".$sss->sum("duration_h")." h",
+            $$var = $$datavar->groupBy(fn ($ss) => $ss->started_at->format("Y-m"))
+                ->map(fn ($sss, $month) => [
+                    "label" => $month,
+                    "value" => $sss->sum("cost"),
+                    "value_label" => $sss->sum("cost")." zł, ".$sss->sum("duration_h")." h",
+                ]);
+            $$var = $this->fillInBlanks($$var, "month", [
+                "value" => 0,
+                "value_label" => "0 zł, 0 h",
             ]);
-        $incomeByMonth = $this->fillInBlanks($incomeByMonth, "month", [
-            "value" => 0,
-            "value_label" => "0 zł, 0 h",
-        ]);
+        }
 
         $summary = [
             "sums" => [
@@ -41,15 +47,18 @@ class StatsController extends Controller
                 "data" => [
                     "sessions" => [
                         "label" => "Łącznie sesji",
-                        "value" => $data->count(),
+                        "value" => $ibmData->count(),
+                        "compared_to" => $ibmybData->count(),
                     ],
                     "time" => [
                         "label" => "Łącznie godzin",
-                        "value" => $data->sum("duration_h") . " h",
+                        "value" => $ibmData->sum("duration_h"),
+                        "compared_to" => $ibmybData->sum("duration_h"),
                     ],
                     "income" => [
-                        "label" => "Łącznie zarobiono",
-                        "value" => $data->sum("cost") . " zł",
+                        "label" => "Łącznie zarobiono [zł]",
+                        "value" => $ibmData->sum("cost"),
+                        "compared_to" => $ibmybData->sum("cost"),
                     ],
                 ]
             ],
@@ -59,15 +68,18 @@ class StatsController extends Controller
                 "data" => [
                     "sessions" => [
                         "label" => "Średnio sesji",
-                        "value" => round($data->count() / $incomeByMonth->count(), 1),
+                        "value" => round($ibmData->count() / $incomeByMonth->count(), 1),
+                        "compared_to" => round($ibmybData->count() / $incomeByMonthYearBack->count(), 1),
                     ],
                     "time" => [
                         "label" => "Średnio godzin",
-                        "value" => round($data->sum("duration_h") / $incomeByMonth->count(), 1) . " h",
+                        "value" => round($ibmData->sum("duration_h") / $incomeByMonth->count(), 1),
+                        "compared_to" => round($ibmybData->sum("duration_h") / $incomeByMonthYearBack->count(), 1),
                     ],
                     "income" => [
-                        "label" => "Średnio zarobiono",
-                        "value" => round($data->sum("cost") / $incomeByMonth->count(), 2) . " zł",
+                        "label" => "Średnio zarobiono [zł]",
+                        "value" => round($ibmData->sum("cost") / $incomeByMonth->count(), 2),
+                        "compared_to" => round($ibmybData->sum("cost") / $incomeByMonthYearBack->count(), 2),
                     ],
                 ],
             ],
@@ -88,6 +100,7 @@ class StatsController extends Controller
 
         return view("pages.stats.index", compact(
             "incomeByMonth",
+            "incomeByMonthYearBack",
             "summary",
             "sections",
             "student",
@@ -95,12 +108,27 @@ class StatsController extends Controller
     }
 
     #region filters
+    private function _updateRange($fields)
+    {
+        foreach ($fields as $name => $value) {
+            Setting::find($name)->update(["value" => $value]);
+        };
+    }
+
     public function updateRange(Request $rq)
     {
         $fields = $rq->except("_token");
-        foreach ($fields as $name => $value) {
-            Setting::find($name)->update(["value" => $value]);
-        }
+        $this->_updateRange($fields);
+        return back()->with("toast", ["success", "Zaktualizowano zakres"]);
+    }
+
+    public function updateRangeQuick(Request $rq)
+    {
+        $fields = [
+            "stats_range_from" => "$rq->year-01-01",
+            "stats_range_to" => "$rq->year-12-31",
+        ];
+        $this->_updateRange($fields);
         return back()->with("toast", ["success", "Zaktualizowano zakres"]);
     }
 

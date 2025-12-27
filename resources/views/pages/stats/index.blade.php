@@ -40,6 +40,10 @@
     <x-shipyard.stats.chart.column
         :data="$incomeByMonth"
     />
+    <x-shipyard.stats.chart.column
+        :data="$incomeByMonthYearBack"
+        title="Poprzedni rok"
+    />
 </x-shipyard.app.card>
 
 <x-shipyard.app.card
@@ -52,9 +56,11 @@
 
     <div class="flex right center">
         @foreach ($s_cat["data"] as $s_data)
-        <x-shipyard.stats.tile :label="$s_data['label']">
-            {{ $s_data["value"] }}
-        </x-shipyard.stats.tile>
+        <x-shipyard.stats.tile
+            :label="$s_data['label']"
+            :value="$s_data['value']"
+            :compared-to="$s_data['compared_to']"
+        />
         @endforeach
     </div>
     @endforeach
