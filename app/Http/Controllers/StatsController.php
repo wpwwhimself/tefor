@@ -68,18 +68,18 @@ class StatsController extends Controller
                 "data" => [
                     "sessions" => [
                         "label" => "Średnio sesji",
-                        "value" => round($ibmData->count() / $incomeByMonth->count(), 1),
-                        "compared_to" => round($ibmybData->count() / $incomeByMonthYearBack->count(), 1),
+                        "value" => round($ibmData->count() / max($incomeByMonth->count(), 1), 1),
+                        "compared_to" => round($ibmybData->count() / max($incomeByMonthYearBack->count(), 1), 1),
                     ],
                     "time" => [
                         "label" => "Średnio godzin",
-                        "value" => round($ibmData->sum("duration_h") / $incomeByMonth->count(), 1),
-                        "compared_to" => round($ibmybData->sum("duration_h") / $incomeByMonthYearBack->count(), 1),
+                        "value" => round($ibmData->sum("duration_h") / max($incomeByMonth->count(), 1), 1),
+                        "compared_to" => round($ibmybData->sum("duration_h") / max($incomeByMonthYearBack->count(), 1), 1),
                     ],
                     "income" => [
                         "label" => "Średnio zarobiono [zł]",
-                        "value" => round($ibmData->sum("cost") / $incomeByMonth->count(), 2),
-                        "compared_to" => round($ibmybData->sum("cost") / $incomeByMonthYearBack->count(), 2),
+                        "value" => round($ibmData->sum("cost") / max($incomeByMonth->count(), 1), 2),
+                        "compared_to" => round($ibmybData->sum("cost") / max($incomeByMonthYearBack->count(), 1), 2),
                     ],
                 ],
             ],
