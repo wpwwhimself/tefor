@@ -186,6 +186,11 @@ class Student extends Model
             ])
             ->toArray();
     }
+
+    public function scopeVisible($query)
+    {
+        return $query;
+    }
     #endregion
 
     #region attributes
