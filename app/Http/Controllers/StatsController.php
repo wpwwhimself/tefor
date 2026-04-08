@@ -15,9 +15,37 @@ class StatsController extends Controller
     {
         $student = Student::find(request("student"));
 
+        $min_year = Carbon::parse(StudentSession::min("started_at"))->format("Y");
+        $incomeByMonth = [];
+        $data = null;
+        for ($year = date("Y"); $year >= $min_year; $year--) {
+            $data = StudentSession::orderBy("started_at")
+                ->where("started_at", ">=", Carbon::parse("$year-01-01"))
+                ->where("started_at", "<=", Carbon::parse("$year-12-31"));
+            if ($student) {
+                $data = $data->where("student_id", $student->id);
+            }
+
+            $data = $data->get();
+
+            $data = $data->groupBy(fn ($ss) => $ss->started_at->format("Y-m"))
+                ->map(fn ($sss, $month) => [
+                    "label" => $month,
+                    "value" => $sss->sum("cost"),
+                    "value_label" => $sss->sum("cost")." zł, ".$sss->sum("duration_h")." h",
+                ]);
+            $data = $this->fillInBlanks($data, "month", [
+                "value" => 0,
+                "value_label" => "0 zł, 0 h",
+            ]);
+
+            $incomeByMonth[] = $data;
+        }
+        unset($data);
+
         foreach ([
-            ["incomeByMonth", "ibmData", 0],
-            ["incomeByMonthYearBack", "ibmybData", 1],
+            ["highlightedIncome", "hiData", 0],
+            ["highlightedIncomeYearBack", "hiybData", 1],
         ] as [$var, $datavar, $offset]) {
             $$datavar = StudentSession::orderBy("started_at")
                 ->where("started_at", ">=", Carbon::parse(setting("stats_range_from"))->subYears($offset))
@@ -47,39 +75,40 @@ class StatsController extends Controller
                 "data" => [
                     "sessions" => [
                         "label" => "Łącznie sesji",
-                        "value" => $ibmData->count(),
-                        "compared_to" => $ibmybData->count(),
+                        "value" => $hiData->count(),
+                        "compared_to" => $hiybData->count(),
                     ],
                     "time" => [
                         "label" => "Łącznie godzin",
-                        "value" => $ibmData->sum("duration_h"),
-                        "compared_to" => $ibmybData->sum("duration_h"),
+                        "value" => $hiData->sum("duration_h"),
+                        "compared_to" => $hiybData->sum("duration_h"),
                     ],
                     "income" => [
                         "label" => "Łącznie zarobiono [zł]",
-                        "value" => $ibmData->sum("cost"),
-                        "compared_to" => $ibmybData->sum("cost"),
+                        "value" => $hiData->sum("cost"),
+                        "compared_to" => $hiybData->sum("cost"),
                     ],
                 ]
             ],
             "avgs" => [
-                "label" => "Średnie",
+                "label" => "Średnie miesięczne",
+                "footnote" => "Średnie są liczone jako [suma wartości w wybranym okresie]/[liczba miesięcy w wybranym okresie]",
                 "icon" => "counter",
                 "data" => [
                     "sessions" => [
                         "label" => "Średnio sesji",
-                        "value" => round($ibmData->count() / max($incomeByMonth->count(), 1), 1),
-                        "compared_to" => round($ibmybData->count() / max($incomeByMonthYearBack->count(), 1), 1),
+                        "value" => round($hiData->count() / max($highlightedIncome->count(), 1), 1),
+                        "compared_to" => round($hiybData->count() / max($highlightedIncomeYearBack->count(), 1), 1),
                     ],
                     "time" => [
                         "label" => "Średnio godzin",
-                        "value" => round($ibmData->sum("duration_h") / max($incomeByMonth->count(), 1), 1),
-                        "compared_to" => round($ibmybData->sum("duration_h") / max($incomeByMonthYearBack->count(), 1), 1),
+                        "value" => round($hiData->sum("duration_h") / max($highlightedIncome->count(), 1), 1),
+                        "compared_to" => round($hiybData->sum("duration_h") / max($highlightedIncomeYearBack->count(), 1), 1),
                     ],
                     "income" => [
                         "label" => "Średnio zarobiono [zł]",
-                        "value" => round($ibmData->sum("cost") / max($incomeByMonth->count(), 1), 2),
-                        "compared_to" => round($ibmybData->sum("cost") / max($incomeByMonthYearBack->count(), 1), 2),
+                        "value" => round($hiData->sum("cost") / max($highlightedIncome->count(), 1), 2),
+                        "compared_to" => round($hiybData->sum("cost") / max($highlightedIncomeYearBack->count(), 1), 2),
                     ],
                 ],
             ],
@@ -87,20 +116,21 @@ class StatsController extends Controller
 
         $sections = [
             [
-                "title" => "Przychody w miesiącach",
-                "icon" => "calendar-month",
-                "id" => "income-by-month",
-            ],
-            [
                 "title" => "Podsumowanie",
                 "icon" => "chart-bar",
                 "id" => "summary",
+            ],
+            [
+                "title" => "Wszystkie przychody w miesiącach",
+                "icon" => "calendar-month",
+                "id" => "income-by-month",
             ],
         ];
 
         return view("pages.stats.index", compact(
             "incomeByMonth",
-            "incomeByMonthYearBack",
+            "highlightedIncome",
+            "highlightedIncomeYearBack",
             "summary",
             "sections",
             "student",
@@ -125,8 +155,8 @@ class StatsController extends Controller
     public function updateRangeQuick(Request $rq)
     {
         $fields = [
-            "stats_range_from" => "$rq->year-01-01",
-            "stats_range_to" => "$rq->year-12-31",
+            "stats_range_from" => max("$rq->year-01-01", Carbon::parse(StudentSession::min("started_at"))->format("Y-m-d")),
+            "stats_range_to" => min("$rq->year-12-31", date("Y-m-d")),
         ];
         $this->_updateRange($fields);
         return back()->with("toast", ["success", "Zaktualizowano zakres"]);
