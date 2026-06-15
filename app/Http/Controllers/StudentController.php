@@ -35,6 +35,7 @@ class StudentController extends Controller
         $data = $rq->except("_token");
         $data["default_rate"] = $data["cash_for_60_min"];
         $data["default_rate_below_hour"] = round($data["cash_for_45_min"] * 60 / 45, 2);
+        unset($data["cash_for_60_min"], $data["cash_for_45_min"]);
 
         Student::whereRaw(true)->update($data);
         return back()->with("toast", ["success", "Stawki zaktualizowane"]);

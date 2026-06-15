@@ -21,6 +21,7 @@ class StudentSession extends Model
         "description" => "Sesje korepetycji. Jedna sesja odzwierciedla jedno spotkanie z uczniem.",
         "role" => "teacher|technical",
         "ordering" => 12,
+        "defaultSort" => "-date",
     ];
 
     use SoftDeletes, Userstamps;
@@ -138,25 +139,45 @@ class StudentSession extends Model
 
     // use CanBeSorted;
     public const SORTS = [
-        // "<name>" => [
-        //     "label" => "",
-        //     "compare-using" => "function|field",
-        //     "discr" => "<function_name|field_name>",
-        // ],
+        "date" => [
+            "label" => "Data",
+            "compare-using" => "field",
+            "discr" => "started_at",
+        ],
     ];
 
     public const FILTERS = [
-        // "<name>" => [
-        //     "label" => "",
-        //     "icon" => "",
-        //     "compare-using" => "function|field",
-        //     "discr" => "<function_name|field_name>",
-        //     "mode" => "<one|many>",
-        //     "operator" => "",
-        //     "options" => [
-        //         "<label>" => <value>,
-        //     ],
-        // ],
+        "student" => [
+            "label" => "Uczeń",
+            "icon" => "account-school",
+            "compare-using" => "field",
+            "discr" => "student_id",
+            "type" => "select",
+            "operator" => "=",
+            "selectData" => [
+                "optionsFromScope" => [
+                    Student::class,
+                    "forConnection",
+                ],
+                "emptyOption" => "Wszyscy",
+            ],
+        ],
+        "time" => [
+            "label" => "Czas trwania [h]",
+            "icon" => "timer",
+            "compare-using" => "field",
+            "discr" => "duration_h",
+            "type" => "number",
+            "operator" => "=",
+        ],
+        "cost" => [
+            "label" => "Kwota",
+            "icon" => "cash",
+            "compare-using" => "field",
+            "discr" => "cost",
+            "type" => "number",
+            "operator" => "=",
+        ],
     ];
 
     #region scopes

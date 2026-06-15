@@ -21,6 +21,7 @@ class Student extends Model
         "description" => "Uczniowie zapisani na zajęcia.",
         "role" => "teacher",
         "ordering" => 11,
+        "defaultSort" => "name",
     ];
 
     use SoftDeletes, Userstamps;
@@ -66,7 +67,7 @@ class Student extends Model
     public function displaySubtitle(): Attribute
     {
         return Attribute::make(
-            get: fn () => null,
+            get: fn () => $this->nickname,
         );
     }
 
@@ -134,38 +135,54 @@ class Student extends Model
     ];
 
     public const ACTIONS = [
-        // [
-        //     "icon" => "",
-        //     "label" => "",
-        //     "show-on" => "<list|edit>",
-        //     "route" => "",
-        //     "role" => "",
-        //     "dangerous" => true,
-        // ],
+        [
+            "icon" => "cash-edit",
+            "label" => "Masowa zmiana stawek",
+            "show-on" => "list",
+            "route" => "none",
+            "onclick" => "openModal('update-default-rates')",
+            // "role" => "",
+            // "dangerous" => true,
+        ],
     ];
     #endregion
 
     // use CanBeSorted;
     public const SORTS = [
-        // "<name>" => [
-        //     "label" => "",
-        //     "compare-using" => "function|field",
-        //     "discr" => "<function_name|field_name>",
-        // ],
+        "name" => [
+            "label" => "Nazwisko",
+            "compare-using" => "field",
+            "discr" => "name",
+        ],
+        "status" => [
+            "label" => "Status",
+            "compare-using" => "field",
+            "discr" => "student_status_id",
+        ],
+        "rate" => [
+            "label" => "Stawka",
+            "compare-using" => "field",
+            "discr" => "default_rate",
+        ],
     ];
 
     public const FILTERS = [
-        // "<name>" => [
-        //     "label" => "",
-        //     "icon" => "",
-        //     "compare-using" => "function|field",
-        //     "discr" => "<function_name|field_name>",
-        //     "mode" => "<one|many>",
-        //     "operator" => "",
-        //     "options" => [
-        //         "<label>" => <value>,
-        //     ],
-        // ],
+        "name" => [
+            "label" => "Nazwisko",
+            "icon" => "badge-account",
+            "compare-using" => "function",
+            "discr" => "name",
+            "type" => "text",
+            "operator" => "~*",
+        ],
+        "rate" => [
+            "label" => "Stawka",
+            // "icon" => "",
+            "compare-using" => "field",
+            "discr" => "default_rate",
+            "type" => "number",
+            "operator" => "=",
+        ]
     ];
 
     #region scopes
