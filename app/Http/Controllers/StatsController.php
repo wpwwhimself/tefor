@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Shipyard\Setting;
+use Wpwwhimself\Shipyard\Models\Setting;
 use App\Models\Student;
 use App\Models\StudentSession;
 use Carbon\Carbon;

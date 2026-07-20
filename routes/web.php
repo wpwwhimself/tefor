@@ -5,8 +5,6 @@ use App\Http\Controllers\StatsController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
-if (file_exists(__DIR__.'/Shipyard/shipyard.php')) require __DIR__.'/Shipyard/shipyard.php';
-
 Route::redirect("/", "/calendar/today");
 
 Route::middleware("auth")->group(function () {

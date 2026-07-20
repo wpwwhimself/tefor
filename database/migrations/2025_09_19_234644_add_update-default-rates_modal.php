@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Shipyard\Modal;
+use Wpwwhimself\Shipyard\Models\Modal;
 use App\Models\Student;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

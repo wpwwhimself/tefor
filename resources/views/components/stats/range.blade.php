@@ -1,4 +1,4 @@
-<x-shipyard.app.card>
+<x-shipyard::app.card>
     <div class="flex right center middle">
         Wyświetlam statystyki z zakresu od
         <strong class="accent primary">{{ setting("stats_range_from") }}</strong>
@@ -9,7 +9,7 @@
         $min_year = Carbon\Carbon::parse(App\Models\StudentSession::min("started_at"))->format("Y");
         @endphp
         @for ($year = date("Y"); $year >= $min_year; $year--)
-        <x-shipyard.ui.button
+        <x-shipyard::ui.button
             icon="calendar-edit"
             :label="$year"
             :action="route('stats.range.update-quick', [
@@ -19,7 +19,7 @@
         />
         @endfor
 
-        <x-shipyard.ui.button
+        <x-shipyard::ui.button
             icon="calendar-edit"
             label="Zmień zakres ręcznie"
             action="none"
@@ -30,4 +30,4 @@
             class="tertiary"
         />
     </div>
-</x-shipyard.app.card>
+</x-shipyard::app.card>

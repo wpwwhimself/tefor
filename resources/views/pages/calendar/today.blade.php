@@ -3,12 +3,12 @@
 
 @section("content")
 
-<x-shipyard.app.section
+<x-shipyard::app.section
     title="Sesje zaplanowane na dzisiaj"
     icon="calendar"
 >
     <x-slot:actions>
-        <x-shipyard.ui.button
+        <x-shipyard::ui.button
             icon="calendar"
             label="Kalendarz"
             :action="route('calendar.show')"
@@ -37,39 +37,39 @@
     <p class="ghost">Wolne na dzisiaj!</p>
     @endforelse
     @endif
-</x-shipyard.app.section>
+</x-shipyard::app.section>
 
-<x-shipyard.app.section
+<x-shipyard::app.section
     title="Dzisiejsze sesje"
     :icon="model_icon('student-sessions')"
 >
     <x-slot:actions>
-        <x-shipyard.app.icon-label-value
+        <x-shipyard::app.icon-label-value
             icon="timer"
             label="Godzin łącznie"
         >
             {{ $sessionsToday->sum("duration_h") }} h
-        </x-shipyard.app.icon-label-value>
+        </x-shipyard::app.icon-label-value>
 
-        <x-shipyard.app.icon-label-value
+        <x-shipyard::app.icon-label-value
             icon="cash"
             label="Zarobiono łącznie"
         >
             {{ $sessionsToday->sum("cost") }} zł
-        </x-shipyard.app.icon-label-value>
+        </x-shipyard::app.icon-label-value>
     </x-slot:actions>
 
     @forelse ($sessionsToday as $session)
-    <x-shipyard.app.model.tile :model="$session">
-        <x-shipyard.ui.button
+    <x-shipyard::app.model.tile :model="$session">
+        <x-shipyard::ui.button
             :action="route('admin.model.edit', ['model' => 'student-sessions', 'id' => $session->id])"
             icon="pencil"
             pop="Edytuj"
         />
-    </x-shipyard.app.model.tile>
+    </x-shipyard::app.model.tile>
     @empty
     <p class="ghost">Brak zapisanych sesji na dzisiaj.</p>
     @endforelse
-</x-shipyard.app.section>
+</x-shipyard::app.section>
 
 @endsection

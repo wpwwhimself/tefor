@@ -3,7 +3,7 @@
 
 @section("content")
 
-<x-shipyard.app.card
+<x-shipyard::app.card
     title="Kalendarz"
     icon="calendar"
 >
@@ -16,6 +16,6 @@
             scrolling="no"
         ></iframe>
     </center>
-</x-shipyard.app.card>
+</x-shipyard::app.card>
 
 @endsection

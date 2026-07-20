@@ -13,5 +13,3 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-if (file_exists(__DIR__.'/Shipyard/shipyard_api.php')) require __DIR__.'/Shipyard/shipyard_api.php';
