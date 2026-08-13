@@ -17,6 +17,19 @@ class Setting extends ShipyardSetting
          */
         return [
             [
+                "title" => "Uczniowie",
+                "icon" => model_icon("students"),
+                "id" => "students",
+                "fields" => [
+                    [
+                        "name" => "students_archival_after_months",
+                        "label" => "Archiwizuj ucznia po [mc]",
+                        "icon" => "calendar-alert",
+                        "hint" => "Codziennie o północy, uczniowie, którzy nie mają nowych sesji w ostatnich n miesiącach, zostają oznaczeni jako archiwalni.",
+                    ],
+                ],
+            ],
+            [
                 "title" => "Podliczenia",
                 "icon" => "chart-bar",
                 "id" => "stats",

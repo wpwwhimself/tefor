@@ -44,4 +44,6 @@ class ShipyardTheme
     // if fonts come from Google Fonts, add the URL here
     public const FONT_IMPORT_URL = 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Kurale&display=swap';
     #endregion
+
+    public const MODULES = [];
 }
