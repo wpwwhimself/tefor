@@ -21,7 +21,7 @@ class Student extends Model
         "description" => "Uczniowie zapisani na zajęcia.",
         "role" => "teacher",
         "ordering" => 11,
-        "defaultSort" => "name",
+        "defaultSort" => "status",
     ];
 
     use SoftDeletes, Userstamps;
@@ -157,12 +157,12 @@ class Student extends Model
         "status" => [
             "label" => "Status",
             "compare-using" => "field",
-            "discr" => "student_status_id",
+            "discr" => ["student_status_id", "name"],
         ],
         "rate" => [
             "label" => "Stawka",
             "compare-using" => "field",
-            "discr" => "default_rate",
+            "discr" => ["default_rate", "name"],
         ],
     ];
 
